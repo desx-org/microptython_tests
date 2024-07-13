@@ -1,6 +1,21 @@
+diff -ruN bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile bin/micropython_micropython_v1.23.0/mpy-cross/Makefile
+--- bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-13 14:18:14.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-13 14:19:52.596956875 -0400
+@@ -1,4 +1,4 @@
+-include ../py/mkenv.mk
++include $(TOP)/py/mkenv.mk
+ 
+ # define main target
+ PROG = mpy-cross
+@@ -58,5 +58,4 @@
+ 
+ OBJ = $(PY_CORE_O)
+ OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
+-
+ include $(TOP)/py/mkrules.mk
 diff -ruN bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile bin/micropython_micropython_v1.23.0/ports/minimal/Makefile
---- bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-06 11:31:47.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-06 14:47:56.255489743 -0400
+--- bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-13 14:18:14.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-13 14:18:45.619957085 -0400
 @@ -1,9 +1,9 @@
 -include ../../py/mkenv.mk
 +include $(TOP)/py/mkenv.mk
@@ -24,9 +39,55 @@ diff -ruN bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile bin/mic
  	shared/libc/printf.c \
  	shared/readline/readline.c \
  	shared/runtime/pyexec.c \
+diff -ruN bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile bin/micropython_micropython_v1.23.0/ports/unix/Makefile
+--- bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-13 14:18:14.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-13 14:19:39.784956906 -0400
+@@ -1,4 +1,8 @@
+ # Select the variant to build for:
++UP_DIR=$(patsubst %/,%,$(dir $1))
++PORT_DIR?=$(call UP_DIR ,$(firstword $(MAKEFILE_LIST)))
++TOP:=$(call UP_DIR ,$(call UP_DIR ,$(PORT_DIR)))
++
+ ifdef VARIANT_DIR
+ # Custom variant path - remove trailing slash and get the final component of
+ # the path as the variant name.
+@@ -6,9 +10,8 @@
+ else
+ # If not given on the command line, then default to standard.
+ VARIANT ?= standard
+-VARIANT_DIR ?= variants/$(VARIANT)
++VARIANT_DIR ?= $(PORT_DIR)/variants/$(VARIANT)
+ endif
+-
+ ifeq ($(wildcard $(VARIANT_DIR)/.),)
+ $(error Invalid VARIANT specified: $(VARIANT_DIR))
+ endif
+@@ -16,18 +19,18 @@
+ # If the build directory is not given, make it reflect the variant name.
+ BUILD ?= build-$(VARIANT)
+ 
+-include ../../py/mkenv.mk
+--include mpconfigport.mk
++include $(TOP)/py/mkenv.mk
++-include $(PORT_DIR)/mpconfigport.mk
+ include $(VARIANT_DIR)/mpconfigvariant.mk
+ 
+ # Use the default frozen manifest, variants may override this.
+-FROZEN_MANIFEST ?= variants/manifest.py
++FROZEN_MANIFEST ?= $(PORT_DIR)/variants/manifest.py
+ 
+ # This should be configured by the mpconfigvariant.mk
+ PROG ?= micropython
+ 
+ # qstr definitions (must come before including py.mk)
+-QSTR_DEFS += qstrdefsport.h
++QSTR_DEFS += $(PORT_DIR)/qstrdefsport.h
+ QSTR_GLOBAL_DEPENDENCIES += $(VARIANT_DIR)/mpconfigvariant.h
+ 
+ # OS name, for simple autoconfig
 diff -ruN bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk bin/micropython_micropython_v1.23.0/py/mkenv.mk
---- bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-06 11:31:47.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-06 14:40:02.734491619 -0400
+--- bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-13 14:18:14.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-13 14:18:45.619957085 -0400
 @@ -10,7 +10,7 @@
  # to get to the top of the tree.
  
@@ -36,10 +97,9 @@ diff -ruN bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk bin/micropython_mi
  
  # Turn on increased build verbosity by defining BUILD_VERBOSE in your main
  # Makefile or in your environment. You can also use V=1 on the make command
-Binary files bin/ref_micropython_micropython_v1.23.0/py/__pycache__/makeqstrdata.cpython-311.pyc and bin/micropython_micropython_v1.23.0/py/__pycache__/makeqstrdata.cpython-311.pyc differ
 diff -ruN bin/ref_micropython_micropython_v1.23.0/py/py.mk bin/micropython_micropython_v1.23.0/py/py.mk
---- bin/ref_micropython_micropython_v1.23.0/py/py.mk	2024-07-06 11:31:47.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/py.mk	2024-07-06 14:46:12.949490189 -0400
+--- bin/ref_micropython_micropython_v1.23.0/py/py.mk	2024-07-13 14:18:14.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/py/py.mk	2024-07-13 14:18:45.619957085 -0400
 @@ -15,7 +15,7 @@
  
  # Any files listed by these variables will cause a full regeneration of qstrs
