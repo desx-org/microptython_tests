@@ -47,9 +47,14 @@ $(MPY_TGT):$(TAR)|$(MPY_DIR)
 	tar -m -C $(MPY_DIR) -xf $< 
 	patch  -d $(MPY_DIR) -p2  < $(PATCH)
 
+
 check:  $(MPY_TGT)
 	git -C $(MPY_DIR) clean -xdf
+	make -C $(MPY_DIR)/mpy-cross V=1 | tee  $b/mpy_cross_loc.txt
+	git -C $(MPY_DIR)/mpy-cross clean -xdf
 	make -f $(PORT_DIR)/Makefile V=1 submodules | tee  $b/submodules_$(PORT_NAME)_rem.txt
+	git -C $(MPY_DIR)/mpy-cross clean -xdf
+	make -f $(MPY_DIR)/mpy-cross/Makefile V=1 | tee  $b/mpy_cross_rem.txt
 
 define MKDIR_RULE
 $1:

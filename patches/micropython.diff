@@ -1,21 +1,34 @@
+Binary files bin/ref_micropython_micropython_v1.23.0/.git/index and bin/micropython_micropython_v1.23.0/.git/index differ
+Binary files bin/ref_micropython_micropython_v1.23.0/.git/modules/lib/berkeley-db-1.xx/index and bin/micropython_micropython_v1.23.0/.git/modules/lib/berkeley-db-1.xx/index differ
+Binary files bin/ref_micropython_micropython_v1.23.0/.git/modules/lib/mbedtls/index and bin/micropython_micropython_v1.23.0/.git/modules/lib/mbedtls/index differ
+Binary files bin/ref_micropython_micropython_v1.23.0/.git/modules/lib/micropython-lib/index and bin/micropython_micropython_v1.23.0/.git/modules/lib/micropython-lib/index differ
 diff -ruN bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile bin/micropython_micropython_v1.23.0/mpy-cross/Makefile
---- bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-13 14:18:14.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-13 14:19:52.596956875 -0400
-@@ -1,4 +1,4 @@
+--- bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-13 14:24:36.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-13 15:06:18.398983543 -0400
+@@ -1,4 +1,13 @@
 -include ../py/mkenv.mk
++UP_DIR=$(patsubst %/,%,$(dir $1))
++PORT_DIR:=$(call UP_DIR ,$(firstword $(MAKEFILE_LIST)))
++TOP_A:= $(shell git rev-parse --show-toplevel)
++TOP:= $(shell realpath --relative-to=$(PORT_DIR) $(TOP_A))
++
++
++$(info PORT_DIR: $(PORT_DIR))
++$(info TOP: $(TOP))
++
 +include $(TOP)/py/mkenv.mk
  
  # define main target
  PROG = mpy-cross
-@@ -58,5 +58,4 @@
+@@ -58,5 +67,4 @@
  
  OBJ = $(PY_CORE_O)
  OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 -
  include $(TOP)/py/mkrules.mk
 diff -ruN bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile bin/micropython_micropython_v1.23.0/ports/minimal/Makefile
---- bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-13 14:18:14.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-13 14:18:45.619957085 -0400
+--- bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-13 14:24:36.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-13 14:25:41.115955580 -0400
 @@ -1,9 +1,9 @@
 -include ../../py/mkenv.mk
 +include $(TOP)/py/mkenv.mk
@@ -40,8 +53,8 @@ diff -ruN bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile bin/mic
  	shared/readline/readline.c \
  	shared/runtime/pyexec.c \
 diff -ruN bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile bin/micropython_micropython_v1.23.0/ports/unix/Makefile
---- bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-13 14:18:14.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-13 14:19:39.784956906 -0400
+--- bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-13 14:24:36.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-13 14:25:41.115955580 -0400
 @@ -1,4 +1,8 @@
  # Select the variant to build for:
 +UP_DIR=$(patsubst %/,%,$(dir $1))
@@ -86,8 +99,8 @@ diff -ruN bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile bin/microp
  
  # OS name, for simple autoconfig
 diff -ruN bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk bin/micropython_micropython_v1.23.0/py/mkenv.mk
---- bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-13 14:18:14.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-13 14:18:45.619957085 -0400
+--- bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-13 14:24:36.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-13 14:25:41.115955580 -0400
 @@ -10,7 +10,7 @@
  # to get to the top of the tree.
  
@@ -97,9 +110,23 @@ diff -ruN bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk bin/micropython_mi
  
  # Turn on increased build verbosity by defining BUILD_VERBOSE in your main
  # Makefile or in your environment. You can also use V=1 on the make command
+diff -ruN bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk bin/micropython_micropython_v1.23.0/py/mkrules.mk
+--- bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-13 14:24:36.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-13 14:25:41.115955580 -0400
+@@ -251,8 +251,8 @@
+ submodules:
+ 	$(ECHO) "Updating submodules: $(GIT_SUBMODULES)"
+ ifneq ($(GIT_SUBMODULES),)
+-	$(Q)git submodule sync $(addprefix $(TOP)/,$(GIT_SUBMODULES))
+-	$(Q)git submodule update --init $(addprefix $(TOP)/,$(GIT_SUBMODULES))
++	$(Q)git -C $(TOP) submodule sync $(GIT_SUBMODULES)
++	$(Q)git -C $(TOP) submodule update --init $(GIT_SUBMODULES)
+ endif
+ .PHONY: submodules
+ 
 diff -ruN bin/ref_micropython_micropython_v1.23.0/py/py.mk bin/micropython_micropython_v1.23.0/py/py.mk
---- bin/ref_micropython_micropython_v1.23.0/py/py.mk	2024-07-13 14:18:14.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/py.mk	2024-07-13 14:18:45.619957085 -0400
+--- bin/ref_micropython_micropython_v1.23.0/py/py.mk	2024-07-13 14:24:36.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/py/py.mk	2024-07-13 14:25:41.116955580 -0400
 @@ -15,7 +15,7 @@
  
  # Any files listed by these variables will cause a full regeneration of qstrs
