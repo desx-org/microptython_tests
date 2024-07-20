@@ -100,7 +100,7 @@ save:$(MPY_TGT)
 	rm -rf $(PATCH) $(REF)
 	mkdir -p $(REF)
 	tar -C $(REF) -xf $(TAR) 
-	diff  -U0 -rN --exclude='*\.git\/*' $(REF) $(MPY_DIR) > $(PATCH) || true
+	diff  -U0 -rN --exclude=*\.git* --exclude=__pycache__  $(REF) $(MPY_DIR) > $(PATCH) || true
 	rm -rf $(REF) 
 
 cln:
@@ -119,8 +119,3 @@ DIRS+=$(BUILD)
 #include $(PORT_DIR)/Makefile
 
 $(foreach V,$(DIRS),$(eval $(call MKDIR_RULE,$V)))
-
-#alloc.o       fatfs_port.P      frozen_mpy   input.o  main.P           modffi.P     modsocket.P    mpbthciport.P           mpbtstackport_h4.P   mpnimbleport.P  shared
-#alloc.P       frozen_content.c  gccollect.o  input.P  micropython      modjni.o     modtermios.o   mpbtstackport_common.o  mpbtstackport_usb.o  mpthreadport.o  unix_mphal.o
-#extmod        frozen_content.o  gccollect.P  lib      micropython.map  modjni.P     modtermios.P   mpbtstackport_common.P  mpbtstackport_usb.P  mpthreadport.P  unix_mphal.P
-#fatfs_port.o  frozen_content.P  genhdr       main.o   modffi.o         modsocket.o  mpbthciport.o  mpbtstackport_h4.o      mpnimbleport.o       py

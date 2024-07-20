@@ -1,6 +1,6 @@
-diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/extmod/extmod.mk bin/micropython_micropython_v1.23.0/extmod/extmod.mk
---- bin/ref_micropython_micropython_v1.23.0/extmod/extmod.mk	2024-07-20 09:21:20.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/extmod/extmod.mk	2024-07-20 10:07:34.651933932 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/extmod/extmod.mk bin/micropython_micropython_v1.23.0/extmod/extmod.mk
+--- bin/ref_micropython_micropython_v1.23.0/extmod/extmod.mk	2024-07-20 10:59:26.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/extmod/extmod.mk	2024-07-20 11:30:15.559915049 -0400
 @@ -174 +174 @@
 -OOFATFS_DIR = lib/oofatfs
 +OOFATFS_DIR = $(TOP)/lib/oofatfs
@@ -23,20 +23,9 @@ diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/extmo
 @@ -384 +384 @@
 -BERKELEY_DB_CONFIG_FILE ?= \"extmod/berkeley-db/berkeley_db_config_port.h\"
 +BERKELEY_DB_CONFIG_FILE ?= \"$(abspath $(TOP))/extmod/berkeley-db/berkeley_db_config_port.h\"
-@@ -413 +413,2 @@
--CYW43_DIR = lib/cyw43-driver
-+CYW43_DIR_B:= lib/cyw43-driver
-+CYW43_DIR:= $(TOP)/$(CYW43_DIR_B)
-@@ -427 +428 @@
--$(BUILD)/$(CYW43_DIR)/src/cyw43_%.o: CFLAGS += -std=c11
-+$(BUILD)/$(CYW43_DIR_B)/src/cyw43_%.o: CFLAGS += -std=c11
-Binary files bin/ref_micropython_micropython_v1.23.0/.git/index and bin/micropython_micropython_v1.23.0/.git/index differ
-Binary files bin/ref_micropython_micropython_v1.23.0/.git/modules/lib/berkeley-db-1.xx/index and bin/micropython_micropython_v1.23.0/.git/modules/lib/berkeley-db-1.xx/index differ
-Binary files bin/ref_micropython_micropython_v1.23.0/.git/modules/lib/mbedtls/index and bin/micropython_micropython_v1.23.0/.git/modules/lib/mbedtls/index differ
-Binary files bin/ref_micropython_micropython_v1.23.0/.git/modules/lib/micropython-lib/index and bin/micropython_micropython_v1.23.0/.git/modules/lib/micropython-lib/index differ
-diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile bin/micropython_micropython_v1.23.0/mpy-cross/Makefile
---- bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-20 09:21:20.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-20 10:53:28.503923391 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile bin/micropython_micropython_v1.23.0/mpy-cross/Makefile
+--- bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-20 10:59:26.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-20 11:10:00.170919654 -0400
 @@ -1 +1 @@
 -include ../py/mkenv.mk
 +include $(TOP)/py/mkenv.mk
@@ -59,9 +48,9 @@ diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/mpy-c
 @@ -60 +63 @@
 -OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 +OBJ += $(addprefix $(BUILD)/, $(SRC_CA:.c=.o))
-diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile bin/micropython_micropython_v1.23.0/ports/minimal/Makefile
---- bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-20 09:21:20.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-20 10:07:34.660933932 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile bin/micropython_micropython_v1.23.0/ports/minimal/Makefile
+--- bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-20 10:59:26.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-20 11:10:00.170919654 -0400
 @@ -1 +1 @@
 -include ../../py/mkenv.mk
 +include $(TOP)/py/mkenv.mk
@@ -73,87 +62,81 @@ diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/ports
 -	uart_core.c \
 +	$(PORT_DIR)/main.c \
 +	$(PORT_DIR)/uart_core.c \
-diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile bin/micropython_micropython_v1.23.0/ports/unix/Makefile
---- bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-20 09:21:20.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-20 10:49:42.432924102 -0400
-@@ -0,0 +1 @@
-+#MAKEFLAGS:=-j 6
-@@ -1,0 +3,4 @@
-+UP_DIR=$(patsubst %/,%,$(dir $1))
-+PORT_DIR?=$(call UP_DIR ,$(firstword $(MAKEFILE_LIST)))
-+TOP:=$(call UP_DIR ,$(call UP_DIR ,$(PORT_DIR)))
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile bin/micropython_micropython_v1.23.0/ports/unix/Makefile
+--- bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-20 10:59:26.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-20 11:26:22.962915923 -0400
+@@ -1,0 +2 @@
 +
-@@ -9 +14 @@
+@@ -9 +10 @@
 -VARIANT_DIR ?= variants/$(VARIANT)
 +VARIANT_DIR ?= $(PORT_DIR)/variants/$(VARIANT)
-@@ -11 +15,0 @@
+@@ -11 +11,0 @@
 -
-@@ -19,2 +23,2 @@
+@@ -19,2 +19,2 @@
 -include ../../py/mkenv.mk
 --include mpconfigport.mk
 +include $(TOP)/py/mkenv.mk
 +-include $(PORT_DIR)/mpconfigport.mk
-@@ -24 +28 @@
+@@ -24 +24 @@
 -FROZEN_MANIFEST ?= variants/manifest.py
 +FROZEN_MANIFEST ?= $(PORT_DIR)/variants/manifest.py
-@@ -30 +34 @@
+@@ -30 +30 @@
 -QSTR_DEFS += qstrdefsport.h
 +QSTR_DEFS += $(PORT_DIR)/qstrdefsport.h
-@@ -42 +46 @@
+@@ -42 +42 @@
 -INC +=  -I.
 +INC +=  -I$(PORT_DIR)
-@@ -197 +201 @@
+@@ -197 +197 @@
 -SRC_C += \
 +SRC_CA +=\
-@@ -213,2 +217,3 @@
+@@ -213,2 +213,3 @@
 -	modjni.c \
 -	$(wildcard $(VARIANT_DIR)/*.c)
 +	modjni.c 
 +
 +SRC_CA += $(wildcard $(VARIANT_DIR)/*.c)
-@@ -216 +221 @@
+@@ -216 +217 @@
 -SHARED_SRC_C += $(addprefix shared/,\
 +SHARED_SRC_CA += $(addprefix shared/,\
-@@ -224,2 +229,2 @@
+@@ -224,2 +225,2 @@
 -OBJ = $(PY_O)
 -OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 +OBJ:= $(PY_O)
 +OBJ += $(addprefix $(BUILD)/, $(SRC_CA:.c=.o))
-@@ -227 +232,3 @@
+@@ -227 +228,3 @@
 -OBJ += $(addprefix $(BUILD)/, $(SHARED_SRC_C:.c=.o))
 +OBJ += $(addprefix $(BUILD)/, $(SHARED_SRC_CA:.c=.o))
 +SRC_C=$(addprefix $(PORT_DIR)/,$(SRC_CA))
 +SHARED_SRC_C:=$(addprefix $(TOP)/,$(SHARED_SRC_CA))
-diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk bin/micropython_micropython_v1.23.0/py/mkenv.mk
---- bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-20 09:21:20.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-20 10:07:34.858933931 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk bin/micropython_micropython_v1.23.0/py/mkenv.mk
+--- bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-20 10:59:26.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-20 11:10:00.171919654 -0400
 @@ -13 +13 @@
 -TOP := $(patsubst %/py/mkenv.mk,%,$(THIS_MAKEFILE))
 +#TOP := $(patsubst %/py/mkenv.mk,%,$(THIS_MAKEFILE))
 @@ -35 +35 @@
 -BUILD ?= build
 +BUILD ?= $(PORT_DIR)/build
-diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk bin/micropython_micropython_v1.23.0/py/mkrules.mk
---- bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-20 09:21:20.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-20 10:56:16.876922761 -0400
-@@ -91,0 +92,6 @@
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk bin/micropython_micropython_v1.23.0/py/mkrules.mk
+--- bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-20 10:59:26.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-20 11:10:19.150919586 -0400
+@@ -89 +89,4 @@
+-$(BUILD)/%.o: %.c
++$(BUILD)/%.o: %.c 
++	$(call compile_c)
++
 +$(BUILD)/%.o: $(PORT_DIR)/%.c
-+	$(call compile_c)
-+
-+$(BUILD)/%.o: $(TOP)/%.c
-+	$(call compile_c)
-+
-@@ -206 +212 @@
+@@ -206 +209 @@
 -MICROPY_MANIFEST_PORT_DIR = $(shell pwd)
 +MICROPY_MANIFEST_PORT_DIR = $(PORT_DIR)
-@@ -254,2 +260,2 @@
+@@ -254,2 +257,2 @@
 -	$(Q)git submodule sync $(addprefix $(TOP)/,$(GIT_SUBMODULES))
 -	$(Q)git submodule update --init $(addprefix $(TOP)/,$(GIT_SUBMODULES))
 +	$(Q)git -C $(TOP) submodule sync $(GIT_SUBMODULES)
 +	$(Q)git -C $(TOP) submodule update --init $(GIT_SUBMODULES)
-diff -U0 -rN '--exclude=*\.git\/*' bin/ref_micropython_micropython_v1.23.0/py/py.mk bin/micropython_micropython_v1.23.0/py/py.mk
---- bin/ref_micropython_micropython_v1.23.0/py/py.mk	2024-07-20 09:21:20.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/py.mk	2024-07-20 10:07:34.858933931 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/py/py.mk bin/micropython_micropython_v1.23.0/py/py.mk
+--- bin/ref_micropython_micropython_v1.23.0/py/py.mk	2024-07-20 10:59:26.000000000 -0400
++++ bin/micropython_micropython_v1.23.0/py/py.mk	2024-07-20 11:10:00.171919654 -0400
 @@ -18 +18 @@
 -QSTR_GLOBAL_DEPENDENCIES += $(PY_SRC)/mpconfig.h mpconfigport.h
 +QSTR_GLOBAL_DEPENDENCIES += $(PY_SRC)/mpconfig.h $(PORT_DIR)/mpconfigport.h
