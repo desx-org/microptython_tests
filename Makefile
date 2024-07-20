@@ -54,9 +54,6 @@ CROSS_DIR:=$(MPY_DIR)/mpy-cross
 MPY_DIR_R:= $(shell realpath --relative-to=$(CROSS_DIR) $(MPY_DIR))
 MPY_DIR_R2:= $(shell realpath --relative-to=$(PORT_DIR) $(MPY_DIR))
 TOP_R:= $(shell realpath --relative-to=$(abspath $(PORT_DIR)) $(abspath $(TOP)))
-$(info TOP_R: $(TOP_R))
-$(info MPY_DIR_R: $(MPY_DIR_R))
-$(info MPY_DIR_R: $(MPY_DIR_R))
 
 #make -C $(CROSS_DIR) PORT_DIR=. TOP=$(MPY_DIR_R) BUILD=$b V=1 2>&1 | tee  $b/mpy_cross_loc.txt
 #git -C $(CROSS_DIR) clean -xdf
@@ -77,6 +74,7 @@ BUILD_DIR:=$b/build-standard
 
 check2:  $(MPY_TGT) $b/build-standard
 	rm -rf $(BUILD_DIR)
+	make -f $(CROSS_DIR)/Makefile PORT_DIR=$(CROSS_DIR) TOP=$(MPY_DIR) BUILD=$b V=1 2>&1 |tee  $b/mpy_cross_rem.txt
 	make -f $(PORT_DIR)/Makefile V=1 PORT_DIR=$(PORT_DIR) TOP=$(MPY_DIR) BUILD=$(BUILD_DIR) MICROPY_MPYCROSS=$b/mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$b/mpy-cross  VARIANT=$(VARIANT) VARIANT_DIR=$(VARIANT_DIR) V=1 2>&1 | tee  $b/unix_$(PORT_NAME)_rem.txt
 
 #make -f $(PORT_DIR)/Makefile V=1 PORT_DIR=$(PORT_DIR) TOP=$(MPY_DIR) BUILD=$b/build-standard MICROPY_MPYCROSS=$b/mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$b/mpy-cross  VARIANT=$(VARIANT) VARIANT_DIR=$(VARIANT_DIR) V=1 2>&1 | tee  $b/unix_$(PORT_NAME)_rem.txt
@@ -102,7 +100,7 @@ save:$(MPY_TGT)
 	rm -rf $(PATCH) $(REF)
 	mkdir -p $(REF)
 	tar -C $(REF) -xf $(TAR) 
-	diff -ruN  $(REF) $(MPY_DIR) > $(PATCH) || true
+	diff  -U0 -rN --exclude='*\.git\/*' $(REF) $(MPY_DIR) > $(PATCH) || true
 	rm -rf $(REF) 
 
 cln:
