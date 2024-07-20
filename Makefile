@@ -11,12 +11,13 @@ NAME:=$(USER)_$(REPO)_$(COMMIT)
 PATCH:=$d/patches/micropython.diff
 
 GIT_DL_TMP=/tmp/git_dl
-MPY_DIR:=$b/$(NAME)
+MICROPY_MPYCROSS:=$b/mpy-cross
+MICROPY_MPYCROSS_DEPENDENCY:=$(MICROPY_MPYCROSS)
+
+TOP:=$b/$(NAME)
 
 PORT_NAME:=unix
-PORT_DIR:=$(MPY_DIR)/ports/$(PORT_NAME)
-
-DIRS+=$(GIT_DL_TMP) $(CACHE_DIR) $b 
+PORT_DIR:=$(TOP)/ports/$(PORT_NAME)
 
 
 TAR:=$(CACHE_DIR)/$(NAME).tar.gz
@@ -24,66 +25,53 @@ TAR:=$(CACHE_DIR)/$(NAME).tar.gz
 
 tar:$(TAR)
 
-#tar --exclude='.git' -C $(GIT_DL_TMP) -czf $(TAR) .
 $(TAR): |$(CACHE_DIR) $b
 	mkdir -p $(GIT_DL_TMP)
 	git clone --depth 1 --branch $(COMMIT) https://github.com/$(USER)/$(REPO).git $(GIT_DL_TMP)
 	make -C $(GIT_DL_TMP)/ports/$(PORT_NAME) V=1 submodules | tee $b/submodules_$(PORT_NAME)_loc.txt
 	tar -C $(GIT_DL_TMP) -czf $(TAR) .
 	rm -rf $(GIT_DL_TMP)
-
 	
 VARIANT:=standard
+#VARIANT:=minimal
+
+#VARIANT:=coverage
+#VARIANT:=nanbox
 VARIANT_DIR:=$(PORT_DIR)/variants/$(VARIANT)
 
 MAKEFLAGS:=-j 6
 
-MPY_TGT:=$(MPY_DIR)/README.md
+MPY_TGT:=$(TOP)/README.md
 .PHONY:mpy
 mpy:$(MPY_TGT)
 
-DIRS+=$(MPY_DIR)
 
-$(MPY_TGT):$(TAR)|$(MPY_DIR)
-	tar -m -C $(MPY_DIR) -xf $< 
-	patch  -d $(MPY_DIR) -p2  < $(PATCH)
+$(MPY_TGT):$(TAR)|$(TOP)
+	tar -m -C $(TOP) -xf $< 
+	patch  -d $(TOP) -p2  < $(PATCH)
 
-
-TOP:=$(MPY_DIR)
-CROSS_DIR:=$(MPY_DIR)/mpy-cross
-MPY_DIR_R:= $(shell realpath --relative-to=$(CROSS_DIR) $(MPY_DIR))
-MPY_DIR_R2:= $(shell realpath --relative-to=$(PORT_DIR) $(MPY_DIR))
+CROSS_DIR:=$(TOP)/mpy-cross
+MPY_DIR_R:= $(shell realpath --relative-to=$(CROSS_DIR) $(TOP))
+MPY_DIR_R2:= $(shell realpath --relative-to=$(PORT_DIR) $(TOP))
 TOP_R:= $(shell realpath --relative-to=$(abspath $(PORT_DIR)) $(abspath $(TOP)))
 
-#make -C $(CROSS_DIR) PORT_DIR=. TOP=$(MPY_DIR_R) BUILD=$b V=1 2>&1 | tee  $b/mpy_cross_loc.txt
-#git -C $(CROSS_DIR) clean -xdf
-DIRS+=$b/build-standard
-check:  $(MPY_TGT) $b/build-standard
-	git -C $(MPY_DIR) clean -xdf
-	make -f $(CROSS_DIR)/Makefile PORT_DIR=$(CROSS_DIR) TOP=$(MPY_DIR) BUILD=$b V=1 2>&1 |tee  $b/mpy_cross_rem.txt
-	make -f $(PORT_DIR)/Makefile PORT_DIR=$(PORT_DIR) TOP=$(MPY_DIR) BUILD=$b MICROPY_MPYCROSS=$b/mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$b/mpy-cross V=1 submodules 2>&1 | tee  $b/submodules_$(PORT_NAME)_rem.txt
-	make -C $(PORT_DIR) V=1 TOP=$(TOP_R) MICROPY_MPYCROSS=$(TOP_R)/../mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$(TOP_R)/../mpy-cross | tee  $b/unix_$(PORT_NAME)_loc.txt
-	@echo =======================================
-	make -f $(PORT_DIR)/Makefile V=1 PORT_DIR=$(PORT_DIR) TOP=$(MPY_DIR) BUILD=$b/build-standard MICROPY_MPYCROSS=$b/mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$b/mpy-cross  VARIANT=$(VARIANT) VARIANT_DIR=$(VARIANT_DIR) V=1 2>&1 | tee  $b/unix_$(PORT_NAME)_rem.txt
+BUILD:=$b/build-$(VARIANT)
 
-check1:  $(MPY_TGT) $b/build-standard
-	git -C $(MPY_DIR) clean -xdf
-	make -C $(PORT_DIR) V=1 TOP=$(TOP_R) MICROPY_MPYCROSS=$(TOP_R)/../mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$(TOP_R)/../mpy-cross | tee  $b/unix_$(PORT_NAME)_loc.txt
 
-BUILD_DIR:=$b/build-standard
+
+EXPORT_VARS:=PORT_DIR TOP MICROPY_MPYCROSS MICROPY_MPYCROSS_DEPENDENCY VARIANT VARIANT_DIR BUILD CROSS_DIR
+
+EXPORT=$(foreach V, $(EXPORT_VARS),$V=$($V))
+
+#make -f $(PORT_DIR)/Makefile $(EXPORT) BUILD=$b submodules 2>&1 | tee  $b/submodules_$(PORT_NAME)_rem.txt
 
 check2:  $(MPY_TGT) $b/build-standard
-	rm -rf $(BUILD_DIR)
-	make -f $(CROSS_DIR)/Makefile PORT_DIR=$(CROSS_DIR) TOP=$(MPY_DIR) BUILD=$b V=1 2>&1 |tee  $b/mpy_cross_rem.txt
-	make -f $(PORT_DIR)/Makefile V=1 PORT_DIR=$(PORT_DIR) TOP=$(MPY_DIR) BUILD=$(BUILD_DIR) MICROPY_MPYCROSS=$b/mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$b/mpy-cross  VARIANT=$(VARIANT) VARIANT_DIR=$(VARIANT_DIR) V=1 2>&1 | tee  $b/unix_$(PORT_NAME)_rem.txt
+	rm -rf $(BUILD)
+	make -f $(CROSS_DIR)/Makefile $(EXPORT) PORT_DIR=$(CROSS_DIR) BUILD=$b V=1 2>&1 |tee  $b/mpy_cross_rem.txt
+	make -f $(PORT_DIR)/Makefile $(EXPORT) 2>&1 | tee  $b/unix_$(PORT_NAME)_rem.txt
 
-#make -f $(PORT_DIR)/Makefile V=1 PORT_DIR=$(PORT_DIR) TOP=$(MPY_DIR) BUILD=$b/build-standard MICROPY_MPYCROSS=$b/mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$b/mpy-cross  VARIANT=$(VARIANT) VARIANT_DIR=$(VARIANT_DIR) V=1 2>&1 | tee  $b/unix_$(PORT_NAME)_rem.txt
-
-#make -f $(PORT_DIR)/Makefile V=1 PORT_DIR=$(PORT_DIR) TOP=$(MPY_DIR) BUILD=$b MICROPY_MPYCROSS=$b/mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$b/mpy-cross  VARIANT=$(VARIANT) VARIANT_DIR=$(VARIANT_DIR) V=1 2>&1 | sed 's/bin\/micropython_micropython_v1.23.0\/ports\/unix/./g' | tee  $b/unix_$(PORT_NAME)_rem.txt
-#make -f $(PORT_DIR)/Makefile PORT_DIR=$(PORT_DIR) TOP=$(MPY_DIR) BUILD=$b MICROPY_MPYCROSS=$b/mpy-cross MICROPY_MPYCROSS_DEPENDENCY=$b/mpy-cross  VARIANT=$(VARIANT) VARIANT_DIR=$(VARIANT_DIR) V=1 2>&1 | tee  $b/submodules_$(PORT_NAME)_rem.txt
-#make -f $(CROSS_DIR)/Makefile PORT_DIR=$(CROSS_DIR) TOP=$(MPY_DIR) V=1 2>&1 | sed 's/bin\/micropython_micropython_v1.23.0\/mpy-cross/./g' | tee  $b/mpy_cross_rem.txt
-
-#git -C $(MPY_DIR)/mpy-cross clean -xdf
+cross:  $(MPY_TGT) $b/build-standard
+	make -f $(CROSS_DIR)/Makefile $(EXPORT) PORT_DIR=$(CROSS_DIR) BUILD=$b V=1 2>&1 |tee  $b/mpy_cross_rem.txt
 
 define MKDIR_RULE
 $1:
@@ -92,7 +80,6 @@ endef
 
 REF:=$b/ref_$(NAME)
 
-DIRS+=$(REF)
 
 .PHONY:save
 
@@ -100,7 +87,7 @@ save:$(MPY_TGT)
 	rm -rf $(PATCH) $(REF)
 	mkdir -p $(REF)
 	tar -C $(REF) -xf $(TAR) 
-	diff  -U0 -rN --exclude=*\.git* --exclude=__pycache__  $(REF) $(MPY_DIR) > $(PATCH) || true
+	diff  -U0 -rN --exclude=*\.git* --exclude=__pycache__  $(REF) $(TOP) > $(PATCH) || true
 	rm -rf $(REF) 
 
 cln:
@@ -109,13 +96,11 @@ cln:
 cln_all:
 	rm -rf $b $(CACHE_DIR)
 
-
 BUILD:=$b/build
-$(PORT_DIR)/Makefile:$(MPY_TGT)|$(BUILD)
-
-INC+=-I$(PORT_DIR)
-DIRS+=$(BUILD)
+$(PORT_DIR)/Makefile: | cross $(MPY_TGT) $(BUILD)
 
 #include $(PORT_DIR)/Makefile
+
+DIRS+=$(BUILD) $(GIT_DL_TMP) $(CACHE_DIR) $b $(TOP) $(REF)
 
 $(foreach V,$(DIRS),$(eval $(call MKDIR_RULE,$V)))
