@@ -1,6 +1,6 @@
-diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/extmod/extmod.mk bin/micropython_micropython_v1.23.0/extmod/extmod.mk
---- bin/ref_micropython_micropython_v1.23.0/extmod/extmod.mk	2024-07-20 16:05:33.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/extmod/extmod.mk	2024-07-20 16:05:52.676151915 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/extmod/extmod.mk bin/m/extmod/extmod.mk
+--- bin/ref_m/extmod/extmod.mk	2024-07-21 12:58:41.486695868 -0400
++++ bin/m/extmod/extmod.mk	2024-07-21 12:52:08.990697341 -0400
 @@ -174 +174 @@
 -OOFATFS_DIR = lib/oofatfs
 +OOFATFS_DIR = $(TOP)/lib/oofatfs
@@ -23,9 +23,9 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micr
 @@ -384 +384 @@
 -BERKELEY_DB_CONFIG_FILE ?= \"extmod/berkeley-db/berkeley_db_config_port.h\"
 +BERKELEY_DB_CONFIG_FILE ?= \"$(abspath $(TOP))/extmod/berkeley-db/berkeley_db_config_port.h\"
-diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile bin/micropython_micropython_v1.23.0/mpy-cross/Makefile
---- bin/ref_micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-20 16:05:33.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/mpy-cross/Makefile	2024-07-20 16:05:52.676151915 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/mpy-cross/Makefile bin/m/mpy-cross/Makefile
+--- bin/ref_m/mpy-cross/Makefile	2024-07-21 12:58:41.754695868 -0400
++++ bin/m/mpy-cross/Makefile	2024-07-21 12:52:08.990697341 -0400
 @@ -1 +1 @@
 -include ../py/mkenv.mk
 +include $(TOP)/py/mkenv.mk
@@ -48,9 +48,9 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micr
 @@ -60 +63 @@
 -OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 +OBJ += $(addprefix $(BUILD)/, $(SRC_CA:.c=.o))
-diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile bin/micropython_micropython_v1.23.0/ports/minimal/Makefile
---- bin/ref_micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-20 16:05:33.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/ports/minimal/Makefile	2024-07-20 16:05:52.676151915 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/ports/minimal/Makefile bin/m/ports/minimal/Makefile
+--- bin/ref_m/ports/minimal/Makefile	2024-07-21 12:58:41.785695867 -0400
++++ bin/m/ports/minimal/Makefile	2024-07-21 12:52:08.991697341 -0400
 @@ -1 +1 @@
 -include ../../py/mkenv.mk
 +include $(TOP)/py/mkenv.mk
@@ -62,9 +62,9 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micr
 -	uart_core.c \
 +	$(PORT_DIR)/main.c \
 +	$(PORT_DIR)/uart_core.c \
-diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile bin/micropython_micropython_v1.23.0/ports/unix/Makefile
---- bin/ref_micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-20 16:05:33.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/ports/unix/Makefile	2024-07-20 16:05:52.676151915 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/ports/unix/Makefile bin/m/ports/unix/Makefile
+--- bin/ref_m/ports/unix/Makefile	2024-07-21 12:58:41.835695867 -0400
++++ bin/m/ports/unix/Makefile	2024-07-21 12:52:08.991697341 -0400
 @@ -1,0 +2 @@
 +
 @@ -9 +10 @@
@@ -108,26 +108,26 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micr
 +OBJ += $(addprefix $(BUILD)/, $(SHARED_SRC_CA:.c=.o))
 +SRC_C=$(addprefix $(PORT_DIR)/,$(SRC_CA))
 +SHARED_SRC_C:=$(addprefix $(TOP)/,$(SHARED_SRC_CA))
-diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/ports/unix/variants/coverage/mpconfigvariant.mk bin/micropython_micropython_v1.23.0/ports/unix/variants/coverage/mpconfigvariant.mk
---- bin/ref_micropython_micropython_v1.23.0/ports/unix/variants/coverage/mpconfigvariant.mk	2024-07-20 16:05:33.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/ports/unix/variants/coverage/mpconfigvariant.mk	2024-07-20 16:05:52.676151915 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/ports/unix/variants/coverage/mpconfigvariant.mk bin/m/ports/unix/variants/coverage/mpconfigvariant.mk
+--- bin/ref_m/ports/unix/variants/coverage/mpconfigvariant.mk	2024-07-21 12:58:41.838695867 -0400
++++ bin/m/ports/unix/variants/coverage/mpconfigvariant.mk	2024-07-21 12:52:08.991697341 -0400
 @@ -15,2 +15,2 @@
 -SRC_C += coverage.c
 -SRC_CXX += coveragecpp.cpp
 +SRC_C += $(VARIANT_DIR)/coverage.c
 +SRC_CXX += $(PORT_DIR)/coveragecpp.cpp
-diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk bin/micropython_micropython_v1.23.0/py/mkenv.mk
---- bin/ref_micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-20 16:05:33.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/mkenv.mk	2024-07-20 16:05:52.676151915 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/py/mkenv.mk bin/m/py/mkenv.mk
+--- bin/ref_m/py/mkenv.mk	2024-07-21 12:58:41.847695867 -0400
++++ bin/m/py/mkenv.mk	2024-07-21 12:52:08.991697341 -0400
 @@ -13 +13 @@
 -TOP := $(patsubst %/py/mkenv.mk,%,$(THIS_MAKEFILE))
 +#TOP := $(patsubst %/py/mkenv.mk,%,$(THIS_MAKEFILE))
 @@ -35 +35 @@
 -BUILD ?= build
 +BUILD ?= $(PORT_DIR)/build
-diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk bin/micropython_micropython_v1.23.0/py/mkrules.mk
---- bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-20 16:05:33.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-21 12:20:42.105704651 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/py/mkrules.mk bin/m/py/mkrules.mk
+--- bin/ref_m/py/mkrules.mk	2024-07-21 12:58:41.847695867 -0400
++++ bin/m/py/mkrules.mk	2024-07-21 12:58:30.371695891 -0400
 @@ -89 +89,4 @@
 -$(BUILD)/%.o: %.c
 +$(BUILD)/%.o: %.c 
@@ -151,6 +151,9 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micr
 @@ -206 +218 @@
 -MICROPY_MANIFEST_PORT_DIR = $(shell pwd)
 +MICROPY_MANIFEST_PORT_DIR = $(PORT_DIR)
+@@ -214 +226 @@
+-$(BUILD)/frozen_content.c: FORCE $(BUILD)/genhdr/qstrdefs.generated.h $(BUILD)/genhdr/root_pointers.h | $(MICROPY_MPYCROSS_DEPENDENCY)
++$(BUILD)/frozen_content.c: $(BUILD)/genhdr/qstrdefs.generated.h $(BUILD)/genhdr/root_pointers.h | $(MICROPY_MPYCROSS_DEPENDENCY)
 @@ -216 +228 @@
 -	$(Q)$(MAKE_MANIFEST) -o $@ $(MANIFEST_VARIABLES) -b "$(BUILD)" $(if $(MPY_CROSS_FLAGS),-f"$(MPY_CROSS_FLAGS)",) --mpy-tool-flags="$(MPY_TOOL_FLAGS)" $(FROZEN_MANIFEST)
 +	$(Q)export MICROPY_MPYCROSS=$(MICROPY_MPYCROSS) && $(MAKE_MANIFEST) -o $@ $(MANIFEST_VARIABLES) -b "$(BUILD)" $(if $(MPY_CROSS_FLAGS),-f"$(MPY_CROSS_FLAGS)",) --mpy-tool-flags="$(MPY_TOOL_FLAGS)" $(FROZEN_MANIFEST)
@@ -159,15 +162,18 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micr
 -	$(Q)git submodule update --init $(addprefix $(TOP)/,$(GIT_SUBMODULES))
 +	$(Q)git -C $(TOP) submodule sync $(GIT_SUBMODULES)
 +	$(Q)git -C $(TOP) submodule update --init $(GIT_SUBMODULES)
-diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/py/py.mk bin/micropython_micropython_v1.23.0/py/py.mk
---- bin/ref_micropython_micropython_v1.23.0/py/py.mk	2024-07-20 16:05:33.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/py.mk	2024-07-20 16:05:52.677151915 -0400
+diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/py/py.mk bin/m/py/py.mk
+--- bin/ref_m/py/py.mk	2024-07-21 12:58:41.853695867 -0400
++++ bin/m/py/py.mk	2024-07-21 12:57:45.289695999 -0400
 @@ -18 +18 @@
 -QSTR_GLOBAL_DEPENDENCIES += $(PY_SRC)/mpconfig.h mpconfigport.h
 +QSTR_GLOBAL_DEPENDENCIES += $(PY_SRC)/mpconfig.h $(PORT_DIR)/mpconfigport.h
 @@ -211 +211 @@
 -SRC_QSTR += $(filter-out $(SRC_QSTR_IGNORE),$(PY_CORE_O_BASENAME:.o=.c))
 +SRC_QSTR += $(addprefix $(TOP)/, $(filter-out $(SRC_QSTR_IGNORE),$(PY_CORE_O_BASENAME:.o=.c)))
+@@ -217 +217 @@
+-$(HEADER_BUILD)/mpversion.h: FORCE | $(HEADER_BUILD)
++$(HEADER_BUILD)/mpversion.h: | $(HEADER_BUILD)
 @@ -230 +230 @@
 -$(HEADER_BUILD)/qstrdefs.generated.h: $(PY_QSTR_DEFS) $(QSTR_DEFS) $(QSTR_DEFS_COLLECTED) $(PY_SRC)/makeqstrdata.py mpconfigport.h $(MPCONFIGPORT_MK) $(PY_SRC)/mpconfig.h | $(HEADER_BUILD)
 +$(HEADER_BUILD)/qstrdefs.generated.h: $(PY_QSTR_DEFS) $(QSTR_DEFS) $(QSTR_DEFS_COLLECTED) $(PY_SRC)/makeqstrdata.py $(PORT_DIR)/mpconfigport.h $(MPCONFIGPORT_MK) $(PY_SRC)/mpconfig.h | $(HEADER_BUILD)

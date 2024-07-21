@@ -4,7 +4,8 @@ CACHE_DIR?= $d/.cache
 MPY_USER:=micropython
 MPY_REPO:=micropython
 MPY_COMMIT:=v1.23.0
-MPY_NAME:=$(MPY_USER)_$(MPY_REPO)_$(MPY_COMMIT)
+#MPY_NAME:=$(MPY_USER)_$(MPY_REPO)_$(MPY_COMMIT)
+MPY_NAME:=m
 MPY_PATCH:=$d/patches/micropython.diff
 GIT_DL_TMP=/tmp/git_dl
 MICROPY_MPYCROSS:=$b/mpy-cross
@@ -13,6 +14,8 @@ TOP:=$b/$(MPY_NAME)
 PORT_NAME:=unix
 PORT_DIR:=$(TOP)/ports/$(PORT_NAME)
 MPY_TAR:=$(CACHE_DIR)/$(MPY_NAME).tar.gz
+
+INC_FILE:=$(abspath $(PORT_DIR)/Makefile)
 
 VARIANT:=standard
 #VARIANT:=minimal
@@ -23,7 +26,8 @@ VARIANT_DIR:=$(PORT_DIR)/variants/$(VARIANT)
 
 MAKEFLAGS:=-j 6
 
-MPY_TGT:=$(TOP)/README.md
+#MPY_TGT:=$(TOP)/README.md
+MPY_TGT:=$(INC_FILE)
 
 CROSS_DIR:=$(TOP)/mpy-cross
 
@@ -33,13 +37,16 @@ EXPORT_VARS:=PORT_DIR TOP MICROPY_MPYCROSS MICROPY_MPYCROSS_DEPENDENCY VARIANT V
 
 EXPORT=$(foreach V, $(EXPORT_VARS),$V=$($V))
 
-all:
+PROG:=micropython
+
+all:$(BUILD)/$(PROG)
 
 check2: $(MPY_TGT) $b/build-standard
 	rm -rf $(BUILD)
 	make -f $(PORT_DIR)/Makefile $(EXPORT) V=1 2>&1 | tee  $b/unix_$(PORT_NAME)_rem.txt
 
-include $(PORT_DIR)/Makefile
+
+
 
 .PHONY:mpy
 mpy:$(MPY_TGT)
@@ -69,7 +76,7 @@ REF:=$b/ref_$(MPY_NAME)
 save:$(MPY_TGT)
 	rm -rf $(PATCH) $(REF)
 	mkdir -p $(REF)
-	tar -C $(REF) -xf $(MPY_TAR) 
+	tar -C $(REF) -xmf $(MPY_TAR) 
 	diff  -U0 -rN --exclude=*\.git* --exclude=__pycache__  $(REF) $(TOP) > $(MPY_PATCH) || true
 	rm -rf $(REF) 
 
@@ -79,8 +86,9 @@ cln:
 cln_all:
 	rm -rf $b $(CACHE_DIR)
 
-$(PORT_DIR)/Makefile: | $(MPY_TGT) 
 
 DIRS+=$(BUILD) $(GIT_DL_TMP) $(CACHE_DIR) $b $(TOP) $(REF) $(dir $(MICROPY_MPYCROSS))
 
 $(foreach V,$(DIRS),$(eval $(call MKDIR_RULE,$V)))
+
+include $(INC_FILE)
