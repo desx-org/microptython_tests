@@ -127,7 +127,7 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micr
 +BUILD ?= $(PORT_DIR)/build
 diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk bin/micropython_micropython_v1.23.0/py/mkrules.mk
 --- bin/ref_micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-20 16:05:33.000000000 -0400
-+++ bin/micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-20 16:05:52.677151915 -0400
++++ bin/micropython_micropython_v1.23.0/py/mkrules.mk	2024-07-21 12:20:42.105704651 -0400
 @@ -89 +89,4 @@
 -$(BUILD)/%.o: %.c
 +$(BUILD)/%.o: %.c 
@@ -151,6 +151,9 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_micropython_micr
 @@ -206 +218 @@
 -MICROPY_MANIFEST_PORT_DIR = $(shell pwd)
 +MICROPY_MANIFEST_PORT_DIR = $(PORT_DIR)
+@@ -216 +228 @@
+-	$(Q)$(MAKE_MANIFEST) -o $@ $(MANIFEST_VARIABLES) -b "$(BUILD)" $(if $(MPY_CROSS_FLAGS),-f"$(MPY_CROSS_FLAGS)",) --mpy-tool-flags="$(MPY_TOOL_FLAGS)" $(FROZEN_MANIFEST)
++	$(Q)export MICROPY_MPYCROSS=$(MICROPY_MPYCROSS) && $(MAKE_MANIFEST) -o $@ $(MANIFEST_VARIABLES) -b "$(BUILD)" $(if $(MPY_CROSS_FLAGS),-f"$(MPY_CROSS_FLAGS)",) --mpy-tool-flags="$(MPY_TOOL_FLAGS)" $(FROZEN_MANIFEST)
 @@ -254,2 +266,2 @@
 -	$(Q)git submodule sync $(addprefix $(TOP)/,$(GIT_SUBMODULES))
 -	$(Q)git submodule update --init $(addprefix $(TOP)/,$(GIT_SUBMODULES))

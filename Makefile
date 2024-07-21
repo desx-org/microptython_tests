@@ -33,10 +33,11 @@ EXPORT_VARS:=PORT_DIR TOP MICROPY_MPYCROSS MICROPY_MPYCROSS_DEPENDENCY VARIANT V
 
 EXPORT=$(foreach V, $(EXPORT_VARS),$V=$($V))
 
+all:
+
 check2: $(MPY_TGT) $b/build-standard
 	rm -rf $(BUILD)
 	make -f $(PORT_DIR)/Makefile $(EXPORT) V=1 2>&1 | tee  $b/unix_$(PORT_NAME)_rem.txt
-all:
 
 include $(PORT_DIR)/Makefile
 
