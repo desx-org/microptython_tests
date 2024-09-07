@@ -41,13 +41,6 @@ PROG:=micropython
 
 all:$(BUILD)/$(PROG)
 
-check2: $(MPY_TGT) $b/build-standard
-	rm -rf $(BUILD)
-	make -f $(PORT_DIR)/Makefile $(EXPORT) V=1 2>&1 | tee  $b/unix_$(PORT_NAME)_rem.txt
-
-
-
-
 .PHONY:mpy
 mpy:$(MPY_TGT)
 
@@ -90,5 +83,5 @@ cln_all:
 DIRS+=$(BUILD) $(GIT_DL_TMP) $(CACHE_DIR) $b $(TOP) $(REF) $(dir $(MICROPY_MPYCROSS))
 
 $(foreach V,$(DIRS),$(eval $(call MKDIR_RULE,$V)))
-
 include $(INC_FILE)
+$(info SRC: $(SRC_QSTR))

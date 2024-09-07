@@ -1,6 +1,6 @@
 diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/extmod/extmod.mk bin/m/extmod/extmod.mk
---- bin/ref_m/extmod/extmod.mk	2024-07-21 12:58:41.486695868 -0400
-+++ bin/m/extmod/extmod.mk	2024-07-21 12:52:08.990697341 -0400
+--- bin/ref_m/extmod/extmod.mk	2024-07-21 14:14:36.243394571 -0400
++++ bin/m/extmod/extmod.mk	2024-07-21 12:59:28.506695756 -0400
 @@ -174 +174 @@
 -OOFATFS_DIR = lib/oofatfs
 +OOFATFS_DIR = $(TOP)/lib/oofatfs
@@ -24,8 +24,8 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/extmod/extmod.
 -BERKELEY_DB_CONFIG_FILE ?= \"extmod/berkeley-db/berkeley_db_config_port.h\"
 +BERKELEY_DB_CONFIG_FILE ?= \"$(abspath $(TOP))/extmod/berkeley-db/berkeley_db_config_port.h\"
 diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/mpy-cross/Makefile bin/m/mpy-cross/Makefile
---- bin/ref_m/mpy-cross/Makefile	2024-07-21 12:58:41.754695868 -0400
-+++ bin/m/mpy-cross/Makefile	2024-07-21 12:52:08.990697341 -0400
+--- bin/ref_m/mpy-cross/Makefile	2024-07-21 14:14:36.548394570 -0400
++++ bin/m/mpy-cross/Makefile	2024-07-21 12:59:28.507695756 -0400
 @@ -1 +1 @@
 -include ../py/mkenv.mk
 +include $(TOP)/py/mkenv.mk
@@ -49,8 +49,8 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/mpy-cross/Make
 -OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 +OBJ += $(addprefix $(BUILD)/, $(SRC_CA:.c=.o))
 diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/ports/minimal/Makefile bin/m/ports/minimal/Makefile
---- bin/ref_m/ports/minimal/Makefile	2024-07-21 12:58:41.785695867 -0400
-+++ bin/m/ports/minimal/Makefile	2024-07-21 12:52:08.991697341 -0400
+--- bin/ref_m/ports/minimal/Makefile	2024-07-21 14:14:36.590394570 -0400
++++ bin/m/ports/minimal/Makefile	2024-07-21 12:59:28.507695756 -0400
 @@ -1 +1 @@
 -include ../../py/mkenv.mk
 +include $(TOP)/py/mkenv.mk
@@ -63,8 +63,8 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/ports/minimal/
 +	$(PORT_DIR)/main.c \
 +	$(PORT_DIR)/uart_core.c \
 diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/ports/unix/Makefile bin/m/ports/unix/Makefile
---- bin/ref_m/ports/unix/Makefile	2024-07-21 12:58:41.835695867 -0400
-+++ bin/m/ports/unix/Makefile	2024-07-21 12:52:08.991697341 -0400
+--- bin/ref_m/ports/unix/Makefile	2024-07-21 14:14:36.649394570 -0400
++++ bin/m/ports/unix/Makefile	2024-07-21 12:59:28.507695756 -0400
 @@ -1,0 +2 @@
 +
 @@ -9 +10 @@
@@ -109,16 +109,16 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/ports/unix/Mak
 +SRC_C=$(addprefix $(PORT_DIR)/,$(SRC_CA))
 +SHARED_SRC_C:=$(addprefix $(TOP)/,$(SHARED_SRC_CA))
 diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/ports/unix/variants/coverage/mpconfigvariant.mk bin/m/ports/unix/variants/coverage/mpconfigvariant.mk
---- bin/ref_m/ports/unix/variants/coverage/mpconfigvariant.mk	2024-07-21 12:58:41.838695867 -0400
-+++ bin/m/ports/unix/variants/coverage/mpconfigvariant.mk	2024-07-21 12:52:08.991697341 -0400
+--- bin/ref_m/ports/unix/variants/coverage/mpconfigvariant.mk	2024-07-21 14:14:36.650394570 -0400
++++ bin/m/ports/unix/variants/coverage/mpconfigvariant.mk	2024-07-21 12:59:28.507695756 -0400
 @@ -15,2 +15,2 @@
 -SRC_C += coverage.c
 -SRC_CXX += coveragecpp.cpp
 +SRC_C += $(VARIANT_DIR)/coverage.c
 +SRC_CXX += $(PORT_DIR)/coveragecpp.cpp
 diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/py/mkenv.mk bin/m/py/mkenv.mk
---- bin/ref_m/py/mkenv.mk	2024-07-21 12:58:41.847695867 -0400
-+++ bin/m/py/mkenv.mk	2024-07-21 12:52:08.991697341 -0400
+--- bin/ref_m/py/mkenv.mk	2024-07-21 14:14:36.660394570 -0400
++++ bin/m/py/mkenv.mk	2024-07-21 12:59:28.507695756 -0400
 @@ -13 +13 @@
 -TOP := $(patsubst %/py/mkenv.mk,%,$(THIS_MAKEFILE))
 +#TOP := $(patsubst %/py/mkenv.mk,%,$(THIS_MAKEFILE))
@@ -126,8 +126,8 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/py/mkenv.mk bi
 -BUILD ?= build
 +BUILD ?= $(PORT_DIR)/build
 diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/py/mkrules.mk bin/m/py/mkrules.mk
---- bin/ref_m/py/mkrules.mk	2024-07-21 12:58:41.847695867 -0400
-+++ bin/m/py/mkrules.mk	2024-07-21 12:58:30.371695891 -0400
+--- bin/ref_m/py/mkrules.mk	2024-07-21 14:14:36.660394570 -0400
++++ bin/m/py/mkrules.mk	2024-07-21 12:59:28.507695756 -0400
 @@ -89 +89,4 @@
 -$(BUILD)/%.o: %.c
 +$(BUILD)/%.o: %.c 
@@ -163,8 +163,8 @@ diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/py/mkrules.mk 
 +	$(Q)git -C $(TOP) submodule sync $(GIT_SUBMODULES)
 +	$(Q)git -C $(TOP) submodule update --init $(GIT_SUBMODULES)
 diff -U0 -rN '--exclude=*.git*' '--exclude=__pycache__' bin/ref_m/py/py.mk bin/m/py/py.mk
---- bin/ref_m/py/py.mk	2024-07-21 12:58:41.853695867 -0400
-+++ bin/m/py/py.mk	2024-07-21 12:57:45.289695999 -0400
+--- bin/ref_m/py/py.mk	2024-07-21 14:14:36.666394569 -0400
++++ bin/m/py/py.mk	2024-07-21 12:59:28.507695756 -0400
 @@ -18 +18 @@
 -QSTR_GLOBAL_DEPENDENCIES += $(PY_SRC)/mpconfig.h mpconfigport.h
 +QSTR_GLOBAL_DEPENDENCIES += $(PY_SRC)/mpconfig.h $(PORT_DIR)/mpconfigport.h
